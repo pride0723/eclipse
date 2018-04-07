@@ -5,7 +5,7 @@ Created on 2018. 4. 5.
 '''
 
 
-# Classifying Names with a Character-level RNN
+# Classifying Names with a Character-level RNN #
 
 from __future__ import unicode_literals, print_function, division
 from io import open
