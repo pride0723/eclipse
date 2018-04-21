@@ -9,8 +9,7 @@ from io import open
 import glob
 import unicodedata
 import string
-from test.test_unicode_file_functions import filenames
-from docutils.nodes import topic
+
 
 all_letters = string.ascii_letters + ".,;'-"
 n_letters = len(all_letters) + 1 # plus EOS marker
@@ -78,7 +77,7 @@ class RNN(nn.Module):
         self.i2o = nn.Linear(n_categories + input_size + hidden_size, output_size)
         self.o2o = nn.Linear(hidden_size + output_size, output_size)
         self.dropout = nn.Dropout(0.1)
-        self.softmax = nn.LogSoftmax()
+        self.softmax = nn.LogSoftmax(dim=1)
         
     def forward(self, category, input, hidden):
         input_combined = torch.cat((category, input, hidden), 1)
@@ -216,9 +215,9 @@ loss per 'plot_every' examples n 'all_losses' for plotting later.
 
 rnn = RNN(n_letters, 128, n_letters)
 
-n_iters = 1000
-print_every = 50
-plot_every = 5
+n_iters = 1000000
+print_every = 5000
+plot_every = 500
 all_losses = []
 total_loss = 0 # reset every plot_every iters
 
@@ -237,7 +236,7 @@ for iter in range(1, n_iters +1):
         
         
 
-import matplotlib.pyolot as plt
+import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 
 plt.figure()
@@ -262,7 +261,7 @@ max_length = 20
 
 # sample from a category and starting letter
 def sample(category, start_letter  = 'A'):
-    category_tensro = Variable(categoryTensor(category))
+    category_tensor = Variable(categoryTensor(category))
     input = Variable(inputTensor(start_letter))
     hidden = rnn.initHidden()
     
@@ -292,7 +291,7 @@ samples('German', 'GER')
 
 samples('Spanish', 'SPA')
 
-Samples('Chinese', 'CHI')
+samples('Chinese', 'CHI')
 
         
         
