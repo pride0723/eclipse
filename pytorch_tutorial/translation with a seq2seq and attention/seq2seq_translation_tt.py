@@ -513,12 +513,12 @@ def evaluate(encoder, decoder, sentence, max_length=MAX_LENGTH):
             decoded_words.append('<EOS>')
             break
         else:
-            decoded_wors.append(output_lang.index2word[ni])
+            decoded_words.append(output_lang.index2word[ni])
             
         decoder_input = Variable(torch.LongTensor([[ni]]))
         decoder_input = decoder_input.cuda() if use_cuda else decoder_input
     
-    return decoder_words, decoder_attentions[:di + 1]
+    return decoded_words, decoder_attentions[:di + 1]
 
 '''
 We can evaluate random sentences from the training set and print out the input, 
@@ -531,7 +531,7 @@ def evaluateRandomly(encoder, decoder, n =10):
         print('=', pair[0])
         output_words, attentions = evaluate(encoder, decoder, pair[0])
         output_sentence = ' '.join(output_words)
-        print('<', output_sentnece)
+        print('<', output_sentence)
         print('')
         
 
@@ -543,7 +543,7 @@ if use_cuda:
     encoder1 = encoder1.cuda()
     attn_decoder1 = attn_decoder1.cuda()
     
-trainIters(encoder1, attn_decoder1, 75000, print_every=50)
+trainIters(encoder1, attn_decoder1, 100, print_every=50)
     
  
 
@@ -554,7 +554,7 @@ output_words, attentions = evaluate(
     encoder1, attn_decoder1, "je suis trop froid .")
 plt.matshow(attentions.numpy())
 
-def showAttention(input_sentnece, output_words, attentions):
+def showAttention(input_sentence, output_words, attentions):
     # set up figure with colorbar
     fig = plt.figure()
     ax = fig.add_subplot(111)
@@ -564,19 +564,19 @@ def showAttention(input_sentnece, output_words, attentions):
     # Set up axes
     ax.set_xticklabels([''] + input_sentence.split(' ') + 
                        ['<EOS>'], rotation=90)
-    ax.set_ytickblases([''] + output_words)
+    ax.set_yticklabels([''] + output_words)
     
     # Show label at every tick
     ax.xaxis.set_major_locator(ticker.MultipleLocator(1))
-    ay.yaxis.set_major_locator(ticker.MultipleLocator(1))
+    ax.yaxis.set_major_locator(ticker.MultipleLocator(1))
     
     plt.show()
     
-def evaluateAndShowAttention(input_sentnece):
-    output_words, attentions = evalutae(
+def evaluateAndShowAttention(input_sentence):
+    output_words, attentions = evaluate(
         encoder1, attn_decoder1, input_sentence)
     print('input = ', input_sentence)
-    print('output = ', ' '.joint(output_words))
+    print('output = ', ' '.join(output_words))
     showAttention(input_sentence, output_words, attentions)
     
 evaluateAndShowAttention("elle a cinq ans de moins que moi .")    
