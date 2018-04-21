@@ -136,7 +136,9 @@ class StyleLoss(nn.Module):
     
 
 
-
+"""
+Load the neural network
+now, we have to import a pre-trained neural network. As in the paper, we are ggoing to use a pretrained 
 
 cnn = models.vgg19(pretained=True).features
 # move it to the GPU if possible:
