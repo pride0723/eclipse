@@ -9,8 +9,7 @@ from io import open
 import glob
 import unicodedata
 import string
-from test.test_unicode_file_functions import filenames
-from docutils.nodes import topic
+
 
 all_letters = string.ascii_letters + ".,;'-"
 n_letters = len(all_letters) + 1 # plus EOS marker
