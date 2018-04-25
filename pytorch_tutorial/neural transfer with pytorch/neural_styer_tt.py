@@ -200,7 +200,7 @@ def get_style_model_and_losses(cnn, style_image, content_img,
                 target = model(content_img).clone()
                 content_loss = ContentLoss(target, content_weight)
                 model.add_module("Content_loss_"+str(i), content_loss)
-                content_losses.append(style_loss)
+                content_losses.append(content_loss)
             
             if name in style_layers:
                 # add style loss:
