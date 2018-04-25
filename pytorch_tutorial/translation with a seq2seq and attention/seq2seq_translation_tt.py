@@ -21,8 +21,8 @@ from torch.autograd import Variable
 from torch import optim
 import torch.nn.functional as F
 
-#use_cuda = torch.cuda.is_available()
-use_cuda = False
+use_cuda = torch.cuda.is_available()
+#use_cuda = False
 
 
 
@@ -294,7 +294,7 @@ class AttnDecoderRNN(nn.Module):
         embedded = self.embedding(input).view(1, 1, -1)
         embedded = self.dropout(embedded)
         
-        attn_weights = F.softmax(self.attn(torch.cat((embedded[0], hidden[0]), 1)))
+        attn_weights = F.softmax(self.attn(torch.cat((embedded[0], hidden[0]), 1)), dim=1)
         attn_applied = torch.bmm(attn_weights.unsqueeze(0), encoder_outputs.unsqueeze(0))
         # bmm -> matrix multiplication for each component (hadamard product?)
         output = torch.cat((embedded[0], attn_applied[0]), 1)
@@ -303,7 +303,7 @@ class AttnDecoderRNN(nn.Module):
         output = F.relu(output)
         output, hidden = self.gru(output, hidden)
         
-        output = F.log_softmax(self.out(output[0]) )
+        output = F.log_softmax(self.out(output[0]) , dim=1)
         return output, hidden, attn_weights
     
     def initHidden(self):
@@ -543,7 +543,7 @@ if use_cuda:
     encoder1 = encoder1.cuda()
     attn_decoder1 = attn_decoder1.cuda()
     
-trainIters(encoder1, attn_decoder1, 100, print_every=50)
+trainIters(encoder1, attn_decoder1, 75000, print_every=5000)
     
  
 
