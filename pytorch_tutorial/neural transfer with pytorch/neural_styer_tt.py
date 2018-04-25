@@ -16,8 +16,8 @@ import torchvision.models as models
 import copy
 
 
-#use_cuda = torch.cuda.is_available()
-use_cuda = False
+use_cuda = torch.cuda.is_available()
+#use_cuda = False
 dtype = torch.cuda.FloatTensor if use_cuda else torch.FloatTensor
 
 
@@ -223,7 +223,7 @@ def get_style_model_and_losses(cnn, style_image, content_img,
                 
             if name in style_layers:
                 # add style loss:
-                target_feature = model(content_img).clone()
+                target_feature = model(style_img).clone()
                 target_feature_gram = gram(target_feature)
                 style_loss = StyleLoss(target_feature_gram, style_weight)                
                 model.add_module("Style_loss_" + str(i), style_loss)
