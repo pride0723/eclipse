@@ -1,4 +1,6 @@
+
 from __future__ import print_function
+
 
 import torch
 import torch.nn as nn
@@ -222,7 +224,8 @@ def get_style_model_and_losses(cnn, style_image, content_img,
             if name in style_layers:
                 # add style loss:
                 target = model(content_img).clone()
-                content_loss = ContentLoss(target, content_weight)
+                target_feature_gram = gram(target_feature)
+                style_loss = StyleLoss(target_feature_gram, style_weight)                
                 model.add_module("Style_loss_" + str(i), style_loss)
                 style_losses.append(style_loss)
             
@@ -309,7 +312,7 @@ def run_style_transfer(cnn, content_img, style_img, input_img, num_steps=300,
                 content_score += cl.backward()
             
             run[0] += 1
-            if run[0] % 2 == 0:
+            if run[0] % 10 == 0:
                 print("run {}:".format(run))
 
                 print('Style Loss : {:4f} Content Loss {:4f}: '.format(
@@ -332,5 +335,7 @@ imshow(output, title='Output Image')
 # sphinx_gallery_thumnail_number = 4
 plt.ioff()
 plt.show()
+
+
 
     
