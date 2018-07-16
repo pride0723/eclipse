@@ -295,10 +295,10 @@ for epoch in range(num_epochs):
     D_avg_losses.append(D_avg_loss)
     G_avg_losses.append(G_avg_loss)
     
-    plot_loss(D_avg_losses, G_avg_losses, epoch, save=True)
+#    plot_loss(D_avg_losses, G_avg_losses, epoch, save=True)
     
     # Show result for fixed noise
-    plot_result(G, fixed_noise, epoch, save=True, fig_size= (5,5))
+#    plot_result(G, fixed_noise, epoch, save=True, fig_size= (5,5))
     
 # Make git
 loss_plots = []
