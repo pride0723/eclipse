@@ -29,10 +29,10 @@ num_filters = [1024, 512, 256, 128]
 
 learning_rate = 0.0002
 betas = (0.5, 0.999)
-batch_size = 32
-num_epochs = 2
+batch_size = 128
+num_epochs = 20
 data_dir = '../Data/MNIST_data/'
-save_dir = 'MNIST_DCGAN_results/'
+save_dir = '/DB/dataset/MNIST_DCGAN_results/'
 
 # MNIST dataset
 transform = transforms.Compose([transforms.Scale(image_size),
@@ -237,10 +237,7 @@ for epoch in range(num_epochs):
     for i, (images, _) in enumerate(data_loader):
         
         
-        if i == 10:
-            break
-    
-        
+           
         
         
         mini_batch = images.size()[0]
