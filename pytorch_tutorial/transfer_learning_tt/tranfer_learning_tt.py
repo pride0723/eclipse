@@ -43,7 +43,7 @@ data_dir = 'hymenoptera_data'
 image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),
                                           data_transforms[x])
                   for x in ['train', 'val']}
-dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=4,  #@UndefinedVariable
+dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=1,  #@UndefinedVariable
                                              shuffle=True, num_workers=4)  # what it the num_workers
               for x in ['train', 'val']}
 dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'val']}
@@ -54,8 +54,8 @@ class_names = image_datasets['train'].classes
 #print(dataset_sizes)
 #print(image_datasets)
 
-#use_gpu = torch.cuda.is_available() #@UndefinedVariable
-use_gpu = False
+use_gpu = torch.cuda.is_available() #@UndefinedVariable
+#use_gpu = False
         
 
 
@@ -105,7 +105,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
             # Iterate over data.
             for data in dataloaders[phase]: # phase -> 'train', or 'val'
                 # get the input
-                inputs, labels = data
+                inputs, labels, path = data
                 
                 # wrap them in Variable
                 if use_gpu:
@@ -190,7 +190,7 @@ def visualize_model(model, num_images=6):
     
                 
 if __name__ == '__main__': # if runtime error is occur, use this 'if' sentense
-    model_ft = models.resnet18(pretrained=True)
+    model_ft = models.resnet18(pretrained=False)
     num_ftrs = model_ft.fc.in_features
     model_ft.fc = nn.Linear(num_ftrs, 2)
 
