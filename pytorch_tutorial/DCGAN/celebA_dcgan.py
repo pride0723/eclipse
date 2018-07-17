@@ -151,7 +151,7 @@ class Discriminator(nn.Module):
     
 
 # Plot losses
-def plot_loss(d_losses, g_losses, num_epoch, save=False, save_dir = 'MNIST_DCGAN_results/', show=False):
+def plot_loss(d_losses, g_losses, num_epoch, save=False, save_dir = 'CelebA_DCGAN_results/', show=False):
     fig, ax = plt.subplots()
     ax.set_xlim(0, num_epochs)
     ax.set_ylim(0, max(np.max(g_losses), np.max(d_losses))*1.1)
@@ -302,15 +302,15 @@ loss_plots = []
 gen_image_plots = []
 for epoch in range(num_epochs):
     # plot for generating git
-    save_fn1 = save_dir + 'MNIST_DCGAN_losses_epoch_{:d}'.format(epoch+1) + '.png'
+    save_fn1 = save_dir + 'CelebA_DCGAN_losses_epoch_{:d}'.format(epoch+1) + '.png'
     loss_plots.append(imageio.read(save_fn1))
     
-    save_fn2 = save_dir + 'MNIST_DCGAN_epoch_{:d}'.format(epoch + 1) + '.png'
+    save_fn2 = save_dir + 'CelebA_DCGAN_epoch_{:d}'.format(epoch + 1) + '.png'
     gen_image_plots.append(imageio.imread(save_fn2))
     
 
-imageio.mimsave(save_dir + 'MNIST_DCGAN_losses_epochs_{:d}'.format(num_epochs) + '.gif', loss_plots, fps=5)
-imageio.mimsave(save_dir + 'MNIST_DCGAN_epochs_{:d}'.format(num_epochs) + '.gif', gen_image_plots, fps=5)
+imageio.mimsave(save_dir + 'CelebA_DCGAN_losses_epochs_{:d}'.format(num_epochs) + '.gif', loss_plots, fps=5)
+imageio.mimsave(save_dir + 'CelebA_DCGAN_epochs_{:d}'.format(num_epochs) + '.gif', gen_image_plots, fps=5)
         
                 
 

@@ -34,6 +34,9 @@ num_epochs = 20
 data_dir = '../Data/MNIST_data/'
 save_dir = '/DB/dataset/MNIST_DCGAN_results/'
 
+
+
+
 # MNIST dataset
 transform = transforms.Compose([transforms.Scale(image_size),
                                  transforms.ToTensor(),
@@ -54,6 +57,18 @@ data_loader = torch.utils.data.DataLoader(dataset=mnist_data,   #@UndefinedVaria
 def  denorm(x):
     out = (x+1)/2
     return out.clamp(0,1)
+
+
+"""
+if not os.path.exists('./dc_img'):
+    os.mkdir('./dc_img')
+"""
+def to_img(x):
+    x = 0.5 * (x+1)
+    x = x.clamp(0,1)
+    x = x.view(x.size(0), 1, image_size, image_size)    
+    return x
+
 
 
 # Generator model
@@ -172,20 +187,34 @@ def plot_loss(d_losses, g_losses, num_epoch, save=False, save_dir = 'MNIST_DCGAN
     else:
         plt.close()
     
-    
+        
 def plot_result(generator, noise, num_epoch, save=False, save_dir = 'MNIST_DCGAN_results/', show=False, fig_size=(5,5)):
     generator.eval()
     
     noise = Variable(noise.cuda())
     gen_image = generator(noise)
-    gen_image = denorm(gen_image)
+    #gen_image2 = denorm(gen_image)
     
     generator.train()
     
+    if save:
+        if not os.path.exists(save_dir):
+            os.mkdir(save_dir)
+        save_fn = save_dir + 'MNIST_DCGAN_epoch_{:d}'.format(num_epoch+1) + '.png'
+        pic = to_img(gen_image.cpu().data)
+        save_image(pic, save_fn)
+         
+    
+    
+
+    
+    
+    
+    """  
     n_rows = np.sqrt(noise.size()[0]).astype(np.int32)
     n_cols = np.sqrt(noise.size()[0]).astype(np.int32)
     fig, axes = plt.subplots(n_rows, n_cols, figsize=fig_size)
-    for ax, img in zip(axes.flatten(), gen_image):
+    for ax, img in zip(axes.flatten(), gen_image2):
         ax.axis('off')
         ax.set_adjustable('box-forced')
         ax.imshow(img.cpu().data.view(image_size, image_size).numpy(), cmap='gray', aspect='equal')
@@ -205,7 +234,8 @@ def plot_result(generator, noise, num_epoch, save=False, save_dir = 'MNIST_DCGAN
         plt.show()
     else:
         plt.close()
-        
+    """
+
 
 
 # Models
@@ -295,6 +325,9 @@ for epoch in range(num_epochs):
     D_avg_losses.append(D_avg_loss)
     G_avg_losses.append(G_avg_loss)
     
+    
+
+        
 #    plot_loss(D_avg_losses, G_avg_losses, epoch, save=True)
     
     # Show result for fixed noise
