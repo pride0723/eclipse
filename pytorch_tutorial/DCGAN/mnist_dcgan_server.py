@@ -17,6 +17,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import imageio
+from torchvision.utils import save_image
 
 
 # Paramters
@@ -331,7 +332,7 @@ for epoch in range(num_epochs):
 #    plot_loss(D_avg_losses, G_avg_losses, epoch, save=True)
     
     # Show result for fixed noise
-#    plot_result(G, fixed_noise, epoch, save=True, fig_size= (5,5))
+    plot_result(G, fixed_noise, epoch, save=True, fig_size= (5,5))
     
 # Make git
 loss_plots = []
