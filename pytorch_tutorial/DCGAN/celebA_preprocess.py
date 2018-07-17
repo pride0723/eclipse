@@ -1,8 +1,8 @@
 import os
 from PIL import Image
 
-data_dir = '../Data/celebA_data/img_align_celeba/'
-save_dir = '../Data/celebA_data/resized_celebA_sample/'
+data_dir = '/DB/dataset/CelebA/Img/img_align_celeba/'
+save_dir = '/DB/dataset/CelebA/Img/resized_celebA_sample/'
 
 image_size = 64
 crop_size = 108

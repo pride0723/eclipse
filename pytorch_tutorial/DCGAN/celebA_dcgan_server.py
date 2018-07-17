@@ -3,7 +3,7 @@ Created on 2018. 7. 15.
 
 @author: DMSL-CDY
 
-MNIST image generation using DCGAN
+CelebA image generation using DCGAN
 '''
 
 
@@ -17,59 +17,44 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import imageio
-from torchvision.utils import save_image
-
+from autoencoder.cnn_autoencoder_tt import learning_rate
 
 # Paramters
 image_size = 64
 G_input_dim = 100
-G_output_dim = 1
-D_input_dim = 1
+G_output_dim = 3
+D_input_dim = 3
 D_output_dim = 1
 num_filters = [1024, 512, 256, 128]
 
 learning_rate = 0.0002
 betas = (0.5, 0.999)
 batch_size = 128
-num_epochs = 30
-data_dir = '../Data/MNIST_data/'
-save_dir = '/DB/dataset/MNIST_DCGAN_results/'
-
-
-
+num_epochs = 20
+data_dir = '../Data/celebA_data/resized_celebA/'
+save_dir = 'CelebA_DCGAN_results/'
 
 # MNIST dataset
 transform = transforms.Compose([transforms.Scale(image_size),
                                  transforms.ToTensor(),
                                  transforms.Normalize(mean=(0.5, 0.5, 0.5), std = (0.5, 0.5, 0.5))])
 
-mnist_data = dsets.MNIST(root=data_dir,
-                         train=True,
-                         transform = transform,
-                         download=True)
 
 
 
-data_loader = torch.utils.data.DataLoader(dataset=mnist_data,   #@UndefinedVariable
+
+celebA_data = dsets.ImageFolder(data_dir, transform=transform)
+
+
+data_loader = torch.utils.data.DataLoader(dataset=celebA_data,   #@UndefinedVariable
                                           batch_size = batch_size,
                                           shuffle = True)
+
 
 # De-normalization
 def  denorm(x):
     out = (x+1)/2
     return out.clamp(0,1)
-
-
-"""
-if not os.path.exists('./dc_img'):
-    os.mkdir('./dc_img')
-"""
-def to_img(x):
-    x = 0.5 * (x+1)
-    x = x.clamp(0,1)
-    x = x.view(x.size(0), 1, image_size, image_size)    
-    return x
-
 
 
 # Generator model
@@ -166,7 +151,7 @@ class Discriminator(nn.Module):
     
 
 # Plot losses
-def plot_loss(d_losses, g_losses, num_epoch, save=False, save_dir = 'MNIST_DCGAN_results/', show=False):
+def plot_loss(d_losses, g_losses, num_epoch, save=False, save_dir = 'CelebA_DCGAN_results/', show=False):
     fig, ax = plt.subplots()
     ax.set_xlim(0, num_epochs)
     ax.set_ylim(0, max(np.max(g_losses), np.max(d_losses))*1.1)
@@ -186,36 +171,22 @@ def plot_loss(d_losses, g_losses, num_epoch, save=False, save_dir = 'MNIST_DCGAN
     if show:
         plt.show()
     else:
-        plt.close()
+        plt.show()
     
-        
-def plot_result(generator, noise, num_epoch, save=False, save_dir = '/DB/dataset/MNIST_DCGAN_results/', show=False, fig_size=(5,5)):
+    
+def plot_result(generator, noise, num_epoch, save=False, save_dir = 'MNIST_DCGAN_results/', show=False, fig_size=(5,5)):
     generator.eval()
     
     noise = Variable(noise.cuda())
     gen_image = generator(noise)
-    #gen_image2 = denorm(gen_image)
+    gen_image = denorm(gen_image)
     
     generator.train()
     
-    if save:
-        if not os.path.exists(save_dir):
-            os.mkdir(save_dir)
-        save_fn = save_dir + 'MNIST_DCGAN_epoch_{:d}'.format(num_epoch+1) + '.png'
-        pic = to_img(gen_image.cpu().data)
-        save_image(pic, save_fn)
-         
-    
-    
-
-    
-    
-    
-    """  
     n_rows = np.sqrt(noise.size()[0]).astype(np.int32)
     n_cols = np.sqrt(noise.size()[0]).astype(np.int32)
     fig, axes = plt.subplots(n_rows, n_cols, figsize=fig_size)
-    for ax, img in zip(axes.flatten(), gen_image2):
+    for ax, img in zip(axes.flatten(), gen_image):
         ax.axis('off')
         ax.set_adjustable('box-forced')
         ax.imshow(img.cpu().data.view(image_size, image_size).numpy(), cmap='gray', aspect='equal')
@@ -235,8 +206,7 @@ def plot_result(generator, noise, num_epoch, save=False, save_dir = '/DB/dataset
         plt.show()
     else:
         plt.close()
-    """
-
+        
 
 
 # Models
@@ -266,10 +236,6 @@ for epoch in range(num_epochs):
     
     # minibatch training
     for i, (images, _) in enumerate(data_loader):
-        
-        
-           
-        
         
         mini_batch = images.size()[0]
         x_ = Variable(images.cuda())
@@ -326,10 +292,7 @@ for epoch in range(num_epochs):
     D_avg_losses.append(D_avg_loss)
     G_avg_losses.append(G_avg_loss)
     
-    
-
-        
-#    plot_loss(D_avg_losses, G_avg_losses, epoch, save=True)
+    plot_loss(D_avg_losses, G_avg_losses, epoch, save=True)
     
     # Show result for fixed noise
     plot_result(G, fixed_noise, epoch, save=True, fig_size= (5,5))
@@ -338,15 +301,16 @@ for epoch in range(num_epochs):
 loss_plots = []
 gen_image_plots = []
 for epoch in range(num_epochs):
-    # plot for generating gif
-#    save_fn1 = save_dir + 'MNIST_DCGAN_losses_epoch_{:d}'.format(epoch + 1) + '.png'
-#    loss_plots.append(imageio.imread(save_fn1))
-
-    save_fn2 = save_dir + 'MNIST_DCGAN_epoch_{:d}'.format(epoch + 1) + '.png'
+    # plot for generating git
+    save_fn1 = save_dir + 'CelebA_DCGAN_losses_epoch_{:d}'.format(epoch+1) + '.png'
+    loss_plots.append(imageio.read(save_fn1))
+    
+    save_fn2 = save_dir + 'CelebA_DCGAN_epoch_{:d}'.format(epoch + 1) + '.png'
     gen_image_plots.append(imageio.imread(save_fn2))
+    
 
-i#mageio.mimsave(save_dir + 'MNIST_DCGAN_losses_epochs_{:d}'.format(num_epochs) + '.gif', loss_plots, fps=5)
-imageio.mimsave(save_dir + 'MNIST_DCGAN_epochs_{:d}'.format(num_epochs) + '.gif', gen_image_plots, fps=5)
+imageio.mimsave(save_dir + 'CelebA_DCGAN_losses_epochs_{:d}'.format(num_epochs) + '.gif', loss_plots, fps=5)
+imageio.mimsave(save_dir + 'CelebA_DCGAN_epochs_{:d}'.format(num_epochs) + '.gif', gen_image_plots, fps=5)
         
                 
 
