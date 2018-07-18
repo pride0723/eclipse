@@ -17,7 +17,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import imageio
-from autoencoder.cnn_autoencoder_tt import learning_rate
+from torchvision.utils import save_image
 
 # Paramters
 image_size = 64
@@ -31,8 +31,8 @@ learning_rate = 0.0002
 betas = (0.5, 0.999)
 batch_size = 128
 num_epochs = 20
-data_dir = '../Data/celebA_data/resized_celebA/'
-save_dir = 'CelebA_DCGAN_results/'
+data_dir = '/DB/dataset/celebA/Img/resized_celebA_sample/'
+save_dir = '/DB/dataset/CelebA_DCGAN_results/'
 
 # MNIST dataset
 transform = transforms.Compose([transforms.Scale(image_size),
@@ -174,19 +174,32 @@ def plot_loss(d_losses, g_losses, num_epoch, save=False, save_dir = 'CelebA_DCGA
         plt.show()
     
     
-def plot_result(generator, noise, num_epoch, save=False, save_dir = 'MNIST_DCGAN_results/', show=False, fig_size=(5,5)):
+def plot_result(generator, noise, num_epoch, save=False, save_dir = '/DB/dataset/MNIST_DCGAN_results/', show=False, fig_size=(5,5)):
     generator.eval()
     
     noise = Variable(noise.cuda())
     gen_image = generator(noise)
-    gen_image = denorm(gen_image)
+    #gen_image2 = denorm(gen_image)
     
     generator.train()
     
+    if save:
+        if not os.path.exists(save_dir):
+            os.mkdir(save_dir)
+        save_fn = save_dir + 'CelebA_DCGAN_epoch_{:d}'.format(num_epoch+1) + '.png'
+        pic = to_img(gen_image.cpu().data)
+        save_image(pic, save_fn)
+         
+    
+    
+  
+    
+    
+    """  
     n_rows = np.sqrt(noise.size()[0]).astype(np.int32)
     n_cols = np.sqrt(noise.size()[0]).astype(np.int32)
     fig, axes = plt.subplots(n_rows, n_cols, figsize=fig_size)
-    for ax, img in zip(axes.flatten(), gen_image):
+    for ax, img in zip(axes.flatten(), gen_image2):
         ax.axis('off')
         ax.set_adjustable('box-forced')
         ax.imshow(img.cpu().data.view(image_size, image_size).numpy(), cmap='gray', aspect='equal')
@@ -206,6 +219,7 @@ def plot_result(generator, noise, num_epoch, save=False, save_dir = 'MNIST_DCGAN
         plt.show()
     else:
         plt.close()
+    """
         
 
 
@@ -292,10 +306,10 @@ for epoch in range(num_epochs):
     D_avg_losses.append(D_avg_loss)
     G_avg_losses.append(G_avg_loss)
     
-    plot_loss(D_avg_losses, G_avg_losses, epoch, save=True)
+    #plot_loss(D_avg_losses, G_avg_losses, epoch, save=True)
     
     # Show result for fixed noise
-    plot_result(G, fixed_noise, epoch, save=True, fig_size= (5,5))
+    plot_result(G, fixed_noise, epoch, save=True, save_dir = save_dir,  fig_size= (5,5))
     
 # Make git
 loss_plots = []
